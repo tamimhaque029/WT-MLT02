@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blood Donor Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f1f1;
+            margin: 0;
+            padding: 30px 0;
+        }
+
+        .container {
+            width: 520px;
+            margin: 0 auto;
+            background: #f4e4e4;
+            border: 2px solid #d5a4a4;
+            padding: 20px 30px 10px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            color: #d81d1d;
+            margin: 0 0 15px;
+            font-size: 28px;
+        }
+
+        .form-box {
+            background: #f8f8f8;
+            border: 1px solid #d0b0b0;
+            padding: 15px 20px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .row label {
+            text-align: right;
+            padding-right: 10px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .row input,
+        .row select {
+            width: 100%;
+            padding: 5px 7px;
+            box-sizing: border-box;
+            border: 1px solid #bdbdbd;
+        }
+
+        .radio-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .radio-row label {
+            font-weight: normal;
+            text-align: left;
+            padding-right: 0;
+        }
+
+        .checkbox-row {
+            margin: 8px 0 10px 120px;
+            font-size: 14px;
+        }
+
+        .error {
+            min-height: 16px;
+            margin: 0 0 5px 120px;
+            color: red;
+            font-size: 12px;
+        }
+
+        .button-row {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 6px 18px;
+            background: #e8e8e8;
+            border: 1px solid #7d7d7d;
+            cursor: pointer;
+        }
+
+        .total {
+            text-align: center;
+            font-weight: bold;
+            margin: 18px 0 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #777;
+            padding: 8px;
+            text-align: center;
+            font-size: 14px;
+            background: #fff;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        .remove-btn {
+            padding: 4px 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Blood Donor Registration</h2>
+
+        <form id="donorForm" novalidate>
+            <div class="form-box">
+                <div class="row">
+                    <label for="fname">Full Name</label>
+                    <input type="text" id="fname" name="fname">
+                </div>
+                <div class="error" id="err-fname"></div>
+
+                <div class="row">
+                    <label for="sid">AIUB ID</label>
+                    <input type="text" id="sid" name="sid">
+                </div>
+                <div class="error" id="err-sid"></div>
+
+                <div class="row">
+                    <label for="phone">Mobile</label>
+                    <input type="text" id="phone" name="phone">
+                </div>
+                <div class="error" id="err-phone"></div>
+
+                <div class="row">
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age">
+                </div>
+                <div class="error" id="err-age"></div>
+
+                <div class="row">
+                    <label for="bgroup">Blood Group</label>
+                    <select id="bgroup" name="bgroup">
+                        <option value="">Select blood group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div class="error" id="err-bgroup"></div>
+
+                <div class="row">
+                    <label>Donated before?</label>
+                    <div class="radio-row">
+                        <label><input type="radio" name="donated" value="Yes"> Yes</label>
+                        <label><input type="radio" name="donated" value="No"> No</label>
+                    </div>
+                </div>
+                <div class="error" id="err-donated"></div>
+
+                <div class="checkbox-row">
+                    <label><input type="checkbox" id="agree" name="agree"> I am healthy and willing to donate</label>
+                </div>
+                <div class="error" id="err-agree"></div>
+
+                <div class="row">
+                    <label for="pass">Password</label>
+                    <input type="password" id="pass" name="pass">
+                </div>
+                <div class="error" id="err-pass"></div>
+
+                <div class="row">
+                    <label for="pass2">Confirm Password</label>
+                    <input type="password" id="pass2" name="pass2">
+                </div>
+                <div class="error" id="err-pass2"></div>
+
+                <div class="button-row">
+                    <button type="submit">Register Donor</button>
+                </div>
+            </div>
+        </form>
+
+        <div class="total">Total donors: <span id="donorCount">2</span></div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>ID</th>
+                    <th>Blood Group</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="donorTableBody">
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        var donorForm = document.getElementById('donorForm');
+        var donorTableBody = document.getElementById('donorTableBody');
+        var donorCount = document.getElementById('donorCount');
+
+        function clearErrors() {
+            var e = document.querySelectorAll('.error');
+            for (var i = 0; i < e.length; i++) {
+                e[i].textContent = '';
+            }
+        }
+
+        function showError(id, msg) {
+            document.getElementById(id).textContent = msg;
+        }
+
+        function updateCount() {
+            donorCount.textContent = donorTableBody.rows.length;
+        }
+
+        function validateForm() {
+            clearErrors();
+            var valid = true;
+
+            var fname = document.getElementById('fname').value.trim();
+            if (fname === '') {
+                showError('err-fname', 'Full Name is required');
+                valid = false;
+            } else if (fname.length < 3) {
+                showError('err-fname', 'Name must have at least 3 characters');
+                valid = false;
+            }
+
+            var sid = document.getElementById('sid').value.trim();
+            var sidPattern = /^\d{2}-\d{5}-\d$/;
+            if (sid === '') {
+                showError('err-sid', 'AIUB ID is required');
+                valid = false;
+            } else if (!sidPattern.test(sid)) {
+                showError('err-sid', 'AIUB ID is not valid');
+                valid = false;
+            }
+
+            var phone = document.getElementById('phone').value.trim();
+            if (phone === '') {
+                showError('err-phone', 'Mobile is required');
+                valid = false;
+            } else if (!/^\d{11}$/.test(phone)) {
+                showError('err-phone', 'Mobile must be 11 digits');
+                valid = false;
+            }
+
+            var ageValue = document.getElementById('age').value.trim();
+            var age = Number(ageValue);
+            if (ageValue === '') {
+                showError('err-age', 'Age is required');
+                valid = false;
+            } else if (isNaN(age) || age < 18 || age > 60) {
+                showError('err-age', 'Age must be between 18 and 60');
+                valid = false;
+            }
+
+            var bloodGroup = document.getElementById('bgroup').value;
+            if (bloodGroup === '') {
+                showError('err-bgroup', 'Select blood group');
+                valid = false;
+            }
+
+            var donated = document.querySelector('input[name="donated"]:checked');
+            if (!donated) {
+                showError('err-donated', 'Select Yes or No');
+                valid = false;
+            }
+
+            var agree = document.getElementById('agree').checked;
+            if (!agree) {
+                showError('err-agree', 'You must agree to donate');
+                valid = false;
+            }
+
+            var pass = document.getElementById('pass').value;
+            if (pass === '') {
+                showError('err-pass', 'Password is required');
+                valid = false;
+            } else if (pass.length < 6) {
+                showError('err-pass', 'Password must be at least 6 characters');
+                valid = false;
+            }
+
+            var pass2 = document.getElementById('pass2').value;
+            if (pass2 === '') {
+                showError('err-pass2', 'Confirm Password is required');
+                valid = false;
+            } else if (pass2 !== pass) {
+                showError('err-pass2', 'Password does not match');
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        donorForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            if (validateForm()) {
+                var name = document.getElementById('fname').value.trim();
+                var id = document.getElementById('sid').value.trim();
+                var group = document.getElementById('bgroup').value;
+
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + name + '</td><td>' + id + '</td><td>' + group + '</td><td><button type="button" class="remove-btn">Remove</button></td>';
+                donorTableBody.appendChild(tr);
+                updateCount();
+                donorForm.reset();
+            }
+        });
+
+        donorTableBody.addEventListener('click', function (e) {
+            if (e.target.className === 'remove-btn') {
+                var row = e.target.parentNode.parentNode;
+                row.parentNode.removeChild(row);
+                updateCount();
+            }
+        });
+
+        updateCount();
+    </script>
+</body>
+</html>
